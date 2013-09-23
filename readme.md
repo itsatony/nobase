@@ -1,3 +1,5 @@
+[![build status](https://secure.travis-ci.org/itsatony/nobase.png)](http://travis-ci.org/itsatony/nobase)
+
 # nobase
 
 [nobase] is a nodejs document store running exclusively in-process memory. non-persistant !
