@@ -15,7 +15,8 @@ The goal here was to have a simple, yet efficient document store for handling in
 * constructing a new nobase ( mongodb equivalent would be a collection )
 
 ````
-    var DB = new aNodeBase('DB');
+	  var nobase = require('nobase');
+    var DB = new nobase('DB');
 ````
 
 * finding documents

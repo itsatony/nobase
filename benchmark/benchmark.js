@@ -44,3 +44,8 @@ var answer = DB.find(true, { limit: 10000 });
 var delta = new Date().getTime() - start;
 console.log('[7] @ ' + delta + ' ---> getting with 40k skip');
 
+var start = new Date().getTime();
+var answer = DB.update(true, { c: 2 }, { limit: 10000, skip: 10000 });
+var delta = new Date().getTime() - start;
+console.log('[8] @ ' + delta + ' ---> updating 10k with 10k skip');
+
