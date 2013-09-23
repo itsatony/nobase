@@ -211,6 +211,7 @@ describe(
 	}
 );
 
+
 describe(
 	'updating documents with a filter function',
 	function() {
@@ -232,3 +233,95 @@ describe(
 		);
 	}
 );
+
+
+describe(
+	'writing db to file',
+	function() {
+		it(
+			'file should be on disk', 
+			function(done) {
+				DB.dump(
+					'./dump.json',
+					function(err) {
+						var exists = fs.existsSync('./dump.json');
+						exists.should.be.true;
+						done();
+					}
+				);
+			}
+		);
+	}
+);
+
+
+describe(
+	'getting db from file',
+	function() {
+		it(
+			'should fill the db', 
+			function(done) {
+				DB.store = {};
+				DB.fromDump('./dump.json',
+					function(err, err2, content, store) {
+						var count = DB.count();
+						count.should.equal(2);
+						done();
+					}
+				);
+			}
+		);
+	}
+);
+
+
+/* 
+
+describe(
+	'creating a document index',
+	function() {
+		it(
+			'should return a object with result-ids listed as arrays relative to their "a" value', 
+			function(done) {
+				var answer = DB.addIndex('a');
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.a('object');
+				should.exist(answer.results['updated']);
+				done();
+			}
+		);
+	}
+); */
+
+/* 
+describe(
+	'get documents by index',
+	function() {
+		it(
+			'should return an array of objects with errors:null and results = [ doc2 ]', 
+			function(done) {
+				var preanswer = DB.add([ { a: 'updated', b: 17 } , { a: 'test_multi', b: 30 } ]);
+				var answer = DB.getIndexedDocuments('a', 'updated');
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				answer.results[0].should.be.a('object');
+				answer.results[0]._id.should.be.a('string');
+				answer.results[0].a.should.equal('updated');
+				answer.results[0].b.should.equal(2);
+				should.exist(answer.results[1]);
+				answer.results[1].should.be.a('object');
+				answer.results[1]._id.should.be.a('string');
+				answer.results[1].a.should.equal('updated');
+				answer.results[1].b.should.equal(17);
+				
+				done();
+			}
+		);
+	}
+);
+ */
+ 
+ 
