@@ -35,7 +35,14 @@ c++;
 var start = new Date().getTime();
 var answer = DB.find(true);
 var delta = new Date().getTime() - start;
-console.log('[2] @ ' + delta + 'ms ---> getting (ALL) 100000 elements');
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting CLONES OF (ALL) 100000 elements');
+
+// ---[[[
+c++;
+var start = new Date().getTime();
+var answer = DB.find(true, {noclone:true});
+var delta = new Date().getTime() - start;
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting uncloned (ALL) 100000 elements');
 
 // ---[[[
 c++;
@@ -53,7 +60,34 @@ var filter = function(d) { d.d === 'two'; };
 var start = new Date().getTime();
 var answer = DB.find(filter);
 var delta = new Date().getTime() - start;
-console.log('[' + c + '] @ ' + delta + 'ms ---> getting 25000 elements by filter');
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting 25000 elements by query-filter-function');
+
+// ---[[[
+c++;
+var last = false;
+var filter = function(d) { d.d === 'two'; };
+var start = new Date().getTime();
+var answer = DB.find({ d: 'two' });
+var delta = new Date().getTime() - start;
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting 25000 elements by 1-query-object');
+
+// ---[[[
+c++;
+var last = false;
+var filter = function(d) { d.d === 'two' && d.b === 'else'; };
+var start = new Date().getTime();
+var answer = DB.find(filter);
+var delta = new Date().getTime() - start;
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting 25000 elements by 2-query-filter-function');
+
+// ---[[[
+c++;
+var last = false;
+var filter = function(d) { d.d === 'two'; };
+var start = new Date().getTime();
+var answer = DB.find({ d: 'two', b: 'else' });
+var delta = new Date().getTime() - start;
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting 25000 elements by 2-query-object');
 
 // ---[[[
 c++;
@@ -109,7 +143,7 @@ console.log('[' + c + '] @ ' + delta + 'ms ---> counting ' + count);
 // ---[[[
 c++;
 var start2 = new Date().getTime();
-var answer = DB.dump(
+var answer = DB.dumpToFile(
 	'./testdump.json',
 	function() {
 		var delta = new Date().getTime() - start2;
@@ -124,11 +158,24 @@ var answer = DB.dump(
 		// ---[[[
 		c++;
 		var start3 = new Date().getTime();
-		var answer = DB.fromDump(
+		var answer = DB.readFromFileDump(
 			'./testdump.json',
+			'replace',
 			function() {
 				var delta = new Date().getTime() - start3;
 				console.log('[' + c + '] @ ' + delta + 'ms ---> reading from Dump ' + count);
+				
+				// ---[[[
+				c++;
+				var start4 = new Date().getTime();
+				var answer = DB.readFromFileDump(
+					'./testdump.json',
+					'add',
+					function() {
+						var delta = new Date().getTime() - start4;
+						console.log('[' + c + '] @ ' + delta + 'ms ---> add by reading from Dump ' + count);
+					}
+				);
 			}
 		);
 	}

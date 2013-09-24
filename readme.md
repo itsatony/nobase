@@ -6,6 +6,7 @@
 
 The goal here was to have a simple, yet efficient document store for handling in-process data.
 
+This project is still in very early development, hence anything is subject to change!
 
 
 * installing
@@ -35,6 +36,20 @@ The goal here was to have a simple, yet efficient document store for handling in
 
 		// finding by function. will get EVERY document from the store. expected is a true||false return value.
 		DB.find(function(doc) { return doc.blubb === 'somethingWeWantToFind'; }, {}, function(errors, results) { console.log(errors); console.log(results); } );
+		
+		// finding documents with a simple object query. 
+		// object-based queries are always AND queries and use a basic === compare which is NOT suitable for objects, etc.
+		// this is SIGNIFICANTLY SLOWER than providing your own check function!
+		DB.find({blubb : 'somethingWeWantToFind' }, {}, function(errors, results) { console.log(errors); console.log(results); } );
+		
+		// for all find calls the second argument is the options object.
+		// options here are skip and limit. 
+		// the following example will return only the second entry of the store:
+		DB.find(true, { skip:1, limit:1 }, function(errors, results) { console.log(errors); console.log(results); } );
+		
+		// find has another option: noclone . it defaults to false because it is UNSAFE. it is much faster, BUT
+		// if you modify the results object you will also modify the DB entry! if you are sure about what you are doing, use it to speed up find about 8-10x !
+		DB.find(true, { noclone: true }, function(errors, results) { console.log(errors); console.log(results); } );
 ````
 
 
@@ -77,14 +92,56 @@ The goal here was to have a simple, yet efficient document store for handling in
 ````
 
 
+* checking if a document exists
+
+````		
+		// update a document by id
+		var thereIsADocument = DB.exists('test_id_001');
+
+		// updating multiple documents by array of ids
+		var thereIsADocument = DB.exists(function(doc) { return (doc.id === 'test_id_001'); }); 
+````
+
+
+* counting entries in the DB
+
+````		
+		var iHaveThisManyEntries = DB.count(); 
+````
+
+
+* wiping the DB
+
+````		
+		// clear all data
+		DB.wipe(); 
+````
+
+
+* dumping the DB to a JSON file
+
+````		
+		DB.dumpToFile('./dump.json', function() { console.log('done'); }); 
+````
+
+
+* reading DB content from a dumped JSON file
+
+````		
+		DB.readFromFileDump = function('./dump.json', 'replace', function() { console.log('done'); }); 
+````
+
+
 
 # VERSION
-v 0.1.0
+
+v 0.1.2
 
 
 # author
 
 Toni Wagner
+
 
 #Licence
 

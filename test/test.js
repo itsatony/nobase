@@ -51,6 +51,29 @@ describe(
 );
 
 describe(
+	'Finding Document and modifying it without affecting the DB',
+	function() {
+		it(
+			'should return an object with errors:null and results = [ doc ]', 
+			function(done) {
+				var answer = DB.find(helpers._id);
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				answer.results[0].should.be.a('object');
+				answer.results[0]._id.should.be.a('string');
+				answer.results[0].a.should.equal('something');
+				answer.results[0].c.should.be.an.instanceof(Buffer);
+				answer.results[0].c = 'changed';
+				DB.store[answer.results[0]._id].c.should.be.an.instanceof(Buffer);
+				done();
+			}
+		);
+	}
+);
+
+describe(
 	'Updating Single Document By Id',
 	function() {
 		it(
@@ -74,7 +97,83 @@ describe(
 );
 
 describe(
-	'Removing A Single Document By Id',
+	'POSITIVE checking if a document exists by Id',
+	function() {
+		it(
+			'should return true', 
+			function(done) {
+				var answer = DB.exists(helpers._id);
+				answer.should.be.true;
+				done();
+			}
+		);
+	}
+);
+
+describe(
+	'NEGATIVE checking if a document exists by Id',
+	function() {
+		it(
+			'should return false', 
+			function(done) {
+				var answer = DB.exists('BLABLA');
+				answer.should.be.false;
+				done();
+			}
+		);
+	}
+);
+
+describe(
+	'POSITIVE checking if a document exists by query',
+	function() {
+		it(
+			'should return true', 
+			function(done) {
+				var answer = DB.exists(function(doc) { return (doc.a === 'something') });
+				answer.should.be.true;
+				done();
+			}
+		);
+	}
+);
+
+describe(
+	'count DB entries',
+	function() {
+		it(
+			'should return a number', 
+			function(done) {
+				var answer = DB.count();
+				answer.should.be.a('number');
+				done();
+			}
+		);
+	}
+);
+
+describe(
+	'finding document with a object-based query',
+	function() {
+		it(
+			'should return a document', 
+			function(done) {
+				var answer = DB.find({ a: 'something'});
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				answer.results[0].should.be.a('object');
+				answer.results[0]._id.should.be.a('string');
+				answer.results[0].a.should.equal('something');
+				done();
+			}
+		);
+	}
+);
+
+describe(
+	'removing A Single Document By Id',
 	function() {
 		it(
 			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
@@ -99,7 +198,7 @@ describe(
 
 
 describe(
-	'Adding multiple documents',
+	'adding multiple documents',
 	function() {
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
@@ -125,7 +224,7 @@ describe(
 );
 
 describe(
-	'Finding all documents',
+	'finding all documents',
 	function() {
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
@@ -241,7 +340,7 @@ describe(
 		it(
 			'file should be on disk', 
 			function(done) {
-				DB.dump(
+				DB.dumpToFile(
 					'./dump.json',
 					function(err) {
 						var exists = fs.existsSync('./dump.json');
@@ -261,8 +360,9 @@ describe(
 		it(
 			'should fill the db', 
 			function(done) {
-				DB.store = {};
-				DB.fromDump('./dump.json',
+				DB.readFromFileDump(
+					'./dump.json',
+					'replace',
 					function(err, err2, content, store) {
 						var count = DB.count();
 						count.should.equal(2);
@@ -274,7 +374,33 @@ describe(
 	}
 );
 
+describe(
+	'extending db from file',
+	function() {
+		it(
+			'should add to the db', 
+			function(done) {
+				DB.wipe();
+				DB.add([ {x:1 }, {x:2}]);
+				DB.readFromFileDump(
+					'./dump.json',
+					'add',
+					function(err, err2, content, store) {
+						var count = DB.count();
+						count.should.equal(4);
+						done();
+					}
+				);
+			}
+		);
+	}
+);
 
+
+ 
+ 
+// --- INDEX NONSENSE
+ 
 /* 
 
 describe(
