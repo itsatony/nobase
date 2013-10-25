@@ -13,22 +13,29 @@ var delta = new Date().getTime() - start;
 console.log('[' + c + '] @ ' + delta + 'ms ---> indexing d attribute');
  */
 // ---[[[
+console.log('[' + c + '] @ ' + 0 + 'ms ---> creating 100000 elements');
 c++;
+var one = [];
+var two = [];
+var three = [];
+var four = [];
+for (var i=0; i < 25000; i++) {	
+	one[i] = { 0: i, a: 'something', b: 'else', c: new Buffer(100), d: 'one' };
+	two[i] = { 0: i+25000, a: 'something', b: 'else', c: new Buffer(30), d: 'two' };
+	three[i] = { 0: i+50000, a: 'something', b: 'else', c: new Buffer(250), d: 'three' };
+	four[i] = { 0: i+75000, a: 'something', b: 'else', c: new Buffer(20), d: 'four' };
+}
+
 var start = new Date().getTime();
-for (var i=0; i < 25000; i++) {
-	var answer = DB.add({ 0: i, a: 'something', b: 'else', c: new Buffer(100), d: 'one' });
+for (var i=0; i < 25000; i++) {	
+	var answer = DB.add(one[i]);
+	var answer = DB.add(two[i]);
+	var answer = DB.add(three[i]);
+	var answer = DB.add(four[i]);
 }
-for (var i=0; i < 25000; i++) {
-	var answer = DB.add({ 0: i, a: 'something', b: 'else', c: new Buffer(100), d: 'two' });
-}
-for (var i=0; i < 25000; i++) {
-	var answer = DB.add({ 0: i, a: 'something', b: 'else', c: new Buffer(100), d: 'three' });
-}
-for (var i=0; i < 25000; i++) {
-	var answer = DB.add({ 0: i, a: 'something', b: 'else', c: new Buffer(100), d: 'four' });
-}
+
 var delta = new Date().getTime() - start;
-console.log('[' + c + '] @ ' + delta + 'ms ---> adding 100000 elements');
+console.log('[' + c + '] @ ' + delta + 'ms ---> adding 100000 elements: ' + DB.count());
 
 // ---[[[
 c++;
