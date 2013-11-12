@@ -6,7 +6,8 @@
   "engine": "node >= 0.10",
   "main": "lib/nobase.js",
   "dependencies": {		
-		"minions": "latest"
+		"minions": "latest",
+		"node-uuid": "latest"
   },
   "devDependencies": {
 		"mocha": "latest",

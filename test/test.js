@@ -2,7 +2,7 @@ var nobase = require ('../lib/nobase');
 var fs = require('fs');
 var should = require('should');
 
-var DB = new nobase('test');
+var DB = new nobase('test', '_uuid');
 
 var helpers = {};
 
@@ -17,12 +17,12 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				answer.results[0].c.should.be.an.instanceof(Buffer);
-				helpers._id = answer.results[0]._id;
-				should.exist(DB.store[helpers._id]);
+				helpers._uuid = answer.results[0]._uuid;
+				should.exist(DB.store[helpers._uuid]);
 				done();
 			}
 		);
@@ -35,13 +35,13 @@ describe(
 		it(
 			'should return an object with errors:null and results = [ doc ]', 
 			function(done) {
-				var answer = DB.find(helpers._id);
+				var answer = DB.find(helpers._uuid);
 				should.equal(answer.errors, null);
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				answer.results[0].c.should.be.an.instanceof(Buffer);
 				done();
@@ -56,17 +56,17 @@ describe(
 		it(
 			'should return an object with errors:null and results = [ doc ]', 
 			function(done) {
-				var answer = DB.find(helpers._id);
+				var answer = DB.find(helpers._uuid);
 				should.equal(answer.errors, null);
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				answer.results[0].c.should.be.an.instanceof(Buffer);
 				answer.results[0].c = 'changed';
-				DB.store[answer.results[0]._id].c.should.be.an.instanceof(Buffer);
+				DB.store[answer.results[0]._uuid].c.should.be.an.instanceof(Buffer);
 				done();
 			}
 		);
@@ -79,13 +79,13 @@ describe(
 		it(
 			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
 			function(done) {
-				var answer = DB.update(helpers._id, { d: 'new', b: 'different' });
+				var answer = DB.update(helpers._uuid, { d: 'new', b: 'different' });
 				should.equal(answer.errors, null);
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				answer.results[0].b.should.equal('different');
 				answer.results[0].c.should.be.an.instanceof(Buffer);
@@ -102,7 +102,7 @@ describe(
 		it(
 			'should return true', 
 			function(done) {
-				var answer = DB.exists(helpers._id);
+				var answer = DB.exists(helpers._uuid);
 				answer.should.be.true;
 				done();
 			}
@@ -145,7 +145,7 @@ describe(
 			'should return a number', 
 			function(done) {
 				var answer = DB.count();
-				answer.should.be.a('number');
+				answer.should.be.type('number');
 				done();
 			}
 		);
@@ -163,8 +163,8 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				done();
 			}
@@ -178,18 +178,18 @@ describe(
 		it(
 			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
 			function(done) {
-				var answer = DB.remove(helpers._id);
+				var answer = DB.remove(helpers._uuid);
 				should.equal(answer.errors, null);
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('something');
 				answer.results[0].b.should.equal('different');
 				answer.results[0].c.should.be.an.instanceof(Buffer);
 				answer.results[0].d.should.equal('new');
-				should.not.exist(DB.store[helpers._id]);
+				should.not.exist(DB.store[helpers._uuid]);
 				done();
 			}
 		);
@@ -208,15 +208,15 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal(1);
 				should.exist(answer.results[1]);
-				answer.results[1].should.be.a('object');
-				answer.results[1]._id.should.be.a('string');
+				answer.results[1].should.be.type('object');
+				answer.results[1]._uuid.should.be.type('string');
 				answer.results[1].a.should.equal('test_multi');
-				should.exist(DB.store[answer.results[0]._id]);
-				should.exist(DB.store[answer.results[1]._id]);
+				should.exist(DB.store[answer.results[0]._uuid]);
+				should.exist(DB.store[answer.results[1]._uuid]);
 				done();
 			}
 		);
@@ -234,12 +234,13 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results.length.should.equal(2);
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal(1);
 				should.exist(answer.results[1]);
-				answer.results[1].should.be.a('object');
-				answer.results[1]._id.should.be.a('string');
+				answer.results[1].should.be.type('object');
+				answer.results[1]._uuid.should.be.type('string');
 				answer.results[1].a.should.equal('test_multi');
 				done();
 			}
@@ -257,9 +258,10 @@ describe(
 				should.equal(answer.errors, null);
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
+				answer.results.length.should.equal(1);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal(1);
 				should.not.exist(answer.results[1]);
 				done();
@@ -279,8 +281,8 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('test_multi');
 				should.not.exist(answer.results[1]);
 				done();
@@ -300,8 +302,8 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('test_multi');
 				should.not.exist(answer.results[1]);
 				done();
@@ -322,8 +324,8 @@ describe(
 				should.exist(answer.results);
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
 				answer.results[0].a.should.equal('updated');
 				answer.results[0].b.should.equal(2);
 				should.not.exist(answer.results[1]);
@@ -434,12 +436,12 @@ describe(
 				answer.results.should.be.an.instanceof(Array);
 				should.exist(answer.results[0]);
 				answer.results[0].should.be.a('object');
-				answer.results[0]._id.should.be.a('string');
+				answer.results[0]._uuid.should.be.a('string');
 				answer.results[0].a.should.equal('updated');
 				answer.results[0].b.should.equal(2);
 				should.exist(answer.results[1]);
 				answer.results[1].should.be.a('object');
-				answer.results[1]._id.should.be.a('string');
+				answer.results[1]._uuid.should.be.a('string');
 				answer.results[1].a.should.equal('updated');
 				answer.results[1].b.should.equal(17);
 				
