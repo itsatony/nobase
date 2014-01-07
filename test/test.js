@@ -312,6 +312,28 @@ describe(
 	}
 );
 
+describe(
+	'finding documents with a _id array',
+	function() {
+		it(
+			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
+			function(done) {
+				var answer = DB.find([ Object.keys(DB.store)[0], Object.keys(DB.store)[1] ]);
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				should.exist(answer.results[1]);
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
+				answer.results[1].should.be.type('object');
+				answer.results[1]._uuid.should.be.type('string');
+				should.not.exist(answer.results[2]);
+				done();
+			}
+		);
+	}
+);
 
 describe(
 	'updating documents with a filter function',
@@ -393,6 +415,32 @@ describe(
 						done();
 					}
 				);
+			}
+		);
+	}
+);
+
+
+describe(
+	'deleting documents with a _id array',
+	function() {
+		it(
+			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
+			function(done) {
+				var answer = DB.remove([ Object.keys(DB.store)[0], Object.keys(DB.store)[1] ]);
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				should.exist(answer.results[1]);
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
+				answer.results[1].should.be.type('object');
+				answer.results[1]._uuid.should.be.type('string');
+				should.not.exist(answer.results[2]);
+				should.not.exist(DB.store[answer.results[0]._uuid]);
+				should.not.exist(DB.store[answer.results[1]._uuid]);
+				done();
 			}
 		);
 	}

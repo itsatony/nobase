@@ -1,7 +1,7 @@
 {
   "name": "nobase",
   "description": "nobase is a nodejs document db running exclusively in-process memory",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "Toni Wagner <i@itsatony.com>",
   "engine": "node >= 0.10",
   "main": "lib/nobase.js",
