@@ -447,6 +447,36 @@ describe(
 );
 
 
+describe(
+	'updating documents with a _id array',
+	function() {
+		it(
+			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
+			function(done) {
+				var id0 = Object.keys(DB.store)[0];
+				var id1 = Object.keys(DB.store)[1];
+				var answer = DB.update([ id0, id1 ], { remove:1 }, {});
+				// console.log('---');
+				// console.log(DB.store[id0]);
+				// console.log('---');
+				should.equal(answer.errors, null);
+				should.exist(answer.results);
+				answer.results.should.be.an.instanceof(Array);
+				should.exist(answer.results[0]);
+				should.exist(answer.results[1]);
+				answer.results[0].should.be.type('object');
+				answer.results[0]._uuid.should.be.type('string');
+				answer.results[1].should.be.type('object');
+				answer.results[1]._uuid.should.be.type('string');
+				answer.results[1].remove.should.be.type('number');
+				should.not.exist(answer.results[2]);
+				done();
+			}
+		);
+	}
+);
+
+
  
  
 // --- INDEX NONSENSE
