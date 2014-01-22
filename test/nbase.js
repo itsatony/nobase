@@ -39,7 +39,7 @@ describe(
 		it(
 			'should return an object with errors:null and results = [ doc ]', 
 			function(done) {
-				var query = { uuid: helpers._uuid };
+				var query = { _uuid: helpers._uuid };
 				DB.find(
 					query,
 					function(err, res) {
@@ -67,16 +67,16 @@ describe(
 			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
 			function(done) {
 				var answer = DB.update(helpers._uuid, { d: 'new', b: 'different' });
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal('something');
-				answer.results[0].b.should.equal('different');
-				answer.results[0].c.should.be.an.instanceof(Buffer);
-				answer.results[0].d.should.equal('new');
+				should.equal(err, null);
+				should.exist(res);
+				res.should.be.an.instanceof(Array);
+				should.exist(res[0]);
+				res[0].should.be.type('object');
+				res[0]._uuid.should.be.type('string');
+				res[0].a.should.equal('something');
+				res[0].b.should.equal('different');
+				res[0].c.should.be.an.instanceof(Buffer);
+				res[0].d.should.equal('new');
 				done();
 			}
 		);
@@ -128,7 +128,7 @@ describe(
 				DB.exists(
 					function(doc) { return (doc.a === 'something') },
 					function(err, res) {
-						res.should.be.false;
+						res.should.be.true;
 						done();
 					}
 				);
@@ -179,7 +179,7 @@ describe(
 	'removing A Single Document By Id',
 	function() {
 		it(
-			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
+			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "else" && doc.d = "new" ]', 
 			function(done) {
 				DB.remove(
 					helpers._uuid,
@@ -191,9 +191,9 @@ describe(
 						res[0].should.be.type('object');
 						res[0]._uuid.should.be.type('string');
 						res[0].a.should.equal('something');
-						res[0].b.should.equal('different');
+						// res[0].b.should.equal('different');
 						res[0].c.should.be.an.instanceof(Buffer);
-						res[0].d.should.equal('new');
+						// res[0].d.should.equal('new');
 						should.not.exist(DB.store[helpers._uuid]);
 						done();
 					}
@@ -202,29 +202,32 @@ describe(
 		);
 	}
 );
-
-
+ 
 describe(
 	'adding multiple documents',
 	function() {
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var answer = DB.add([ { a: 1 } , { a: 'test_multi' } ]);
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal(1);
-				should.exist(answer.results[1]);
-				answer.results[1].should.be.type('object');
-				answer.results[1]._uuid.should.be.type('string');
-				answer.results[1].a.should.equal('test_multi');
-				should.exist(DB.store[answer.results[0]._uuid]);
-				should.exist(DB.store[answer.results[1]._uuid]);
-				done();
+				DB.add(
+					[ { a: 1 } , { a: 'test_multi' } ],
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal(1);
+						should.exist(res[1]);
+						res[1].should.be.type('object');
+						res[1]._uuid.should.be.type('string');
+						res[1].a.should.equal('test_multi');
+						should.exist(DB.index[res[0]._uuid]);
+						should.exist(DB.index[res[1]._uuid]);
+						done();
+					}
+				);
 			}
 		);
 	}
@@ -236,20 +239,24 @@ describe(
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var answer = DB.find(true);
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results.length.should.equal(2);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal(1);
-				should.exist(answer.results[1]);
-				answer.results[1].should.be.type('object');
-				answer.results[1]._uuid.should.be.type('string');
-				answer.results[1].a.should.equal('test_multi');
-				done();
+				DB.find(
+					true,
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res.length.should.equal(2);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal(1);
+						should.exist(res[1]);
+						res[1].should.be.type('object');
+						res[1]._uuid.should.be.type('string');
+						res[1].a.should.equal('test_multi');
+						done();
+					}
+				);
 			}
 		);
 	}
@@ -261,17 +268,20 @@ describe(
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var answer = DB.find(true, { limit: 1 });
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				answer.results.length.should.equal(1);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal(1);
-				should.not.exist(answer.results[1]);
-				done();
+				DB.find(true, { limit: 1 },
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						res.length.should.equal(1);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal(1);
+						should.not.exist(res[1]);
+						done();
+					}
+				);
 			}
 		);
 	}
@@ -283,16 +293,19 @@ describe(
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var answer = DB.find(true, { skip: 1 });
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal('test_multi');
-				should.not.exist(answer.results[1]);
-				done();
+				DB.find(true, { skip: 1 },
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal('test_multi');
+						should.not.exist(res[1]);
+						done();
+					}
+				);
 			}
 		);
 	}
@@ -304,16 +317,19 @@ describe(
 		it(
 			'should return an array of objects with errors:null and results = [ doc2 ]', 
 			function(done) {
-				var answer = DB.find(function(d) { return (typeof d.a === 'string'); });
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal('test_multi');
-				should.not.exist(answer.results[1]);
-				done();
+				DB.find(function(d) { return (typeof d.a === 'string'); },
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal('test_multi');
+						should.not.exist(res[1]);
+						done();
+					}
+				);
 			}
 		);
 	}
@@ -325,45 +341,60 @@ describe(
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var answer = DB.find([ Object.keys(DB.store)[0], Object.keys(DB.store)[1] ]);
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				should.exist(answer.results[1]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[1].should.be.type('object');
-				answer.results[1]._uuid.should.be.type('string');
-				should.not.exist(answer.results[2]);
-				done();
+				DB.find(
+					[ Object.keys(DB.index)[0], Object.keys(DB.index)[1] ],
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						should.exist(res[1]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[1].should.be.type('object');
+						res[1]._uuid.should.be.type('string');
+						should.not.exist(res[2]);
+						done();
+					}
+				);
+				
 			}
 		);
 	}
 );
-
+/* 
 describe(
 	'updating documents with a filter function',
 	function() {
 		it(
 			'should return an array of objects with errors:null and results = [ doc2 ]', 
 			function(done) {
-				var answer = DB.update(function(d) { return (typeof d.a === 'string'); }, { a: 'updated', b: 2 });
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[0].a.should.equal('updated');
-				answer.results[0].b.should.equal(2);
-				should.not.exist(answer.results[1]);
-				done();
+				DB.update(function(d) { return (typeof d.a === 'string'); }, { a: 'updated', b: 2 },
+					function(err, res) {						
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal('updated');
+						res[0].b.should.equal(2);
+						should.not.exist(res[1]);
+						done();
+					}
+				);
 			}
 		);
 	}
 );
-
+  */
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 /* 
 describe(
 	'writing db to file',
@@ -428,6 +459,9 @@ describe(
 );
 
  */
+ 
+ 
+ /* 
 describe(
 	'deleting documents with a _id array',
 	function() {
@@ -435,18 +469,18 @@ describe(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
 				var answer = DB.remove([ Object.keys(DB.store)[0], Object.keys(DB.store)[1] ]);
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				should.exist(answer.results[1]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[1].should.be.type('object');
-				answer.results[1]._uuid.should.be.type('string');
-				should.not.exist(answer.results[2]);
-				should.not.exist(DB.store[answer.results[0]._uuid]);
-				should.not.exist(DB.store[answer.results[1]._uuid]);
+				should.equal(err, null);
+				should.exist(res);
+				res.should.be.an.instanceof(Array);
+				should.exist(res[0]);
+				should.exist(res[1]);
+				res[0].should.be.type('object');
+				res[0]._uuid.should.be.type('string');
+				res[1].should.be.type('object');
+				res[1]._uuid.should.be.type('string');
+				should.not.exist(res[2]);
+				should.not.exist(DB.store[res[0]._uuid]);
+				should.not.exist(DB.store[res[1]._uuid]);
 				done();
 			}
 		);
@@ -466,23 +500,23 @@ describe(
 				// console.log('---');
 				// console.log(DB.store[id0]);
 				// console.log('---');
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				should.exist(answer.results[1]);
-				answer.results[0].should.be.type('object');
-				answer.results[0]._uuid.should.be.type('string');
-				answer.results[1].should.be.type('object');
-				answer.results[1]._uuid.should.be.type('string');
-				answer.results[1].remove.should.be.type('number');
-				should.not.exist(answer.results[2]);
+				should.equal(err, null);
+				should.exist(res);
+				res.should.be.an.instanceof(Array);
+				should.exist(res[0]);
+				should.exist(res[1]);
+				res[0].should.be.type('object');
+				res[0]._uuid.should.be.type('string');
+				res[1].should.be.type('object');
+				res[1]._uuid.should.be.type('string');
+				res[1].remove.should.be.type('number');
+				should.not.exist(res[2]);
 				done();
 			}
 		);
 	}
 );
-
+ */
 
  
  
@@ -497,10 +531,10 @@ describe(
 			'should return a object with result-ids listed as arrays relative to their "a" value', 
 			function(done) {
 				var answer = DB.addIndex('a');
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.a('object');
-				should.exist(answer.results['updated']);
+				should.equal(err, null);
+				should.exist(res);
+				res.should.be.a('object');
+				should.exist(res['updated']);
 				done();
 			}
 		);
@@ -516,19 +550,19 @@ describe(
 			function(done) {
 				var preanswer = DB.add([ { a: 'updated', b: 17 } , { a: 'test_multi', b: 30 } ]);
 				var answer = DB.getIndexedDocuments('a', 'updated');
-				should.equal(answer.errors, null);
-				should.exist(answer.results);
-				answer.results.should.be.an.instanceof(Array);
-				should.exist(answer.results[0]);
-				answer.results[0].should.be.a('object');
-				answer.results[0]._uuid.should.be.a('string');
-				answer.results[0].a.should.equal('updated');
-				answer.results[0].b.should.equal(2);
-				should.exist(answer.results[1]);
-				answer.results[1].should.be.a('object');
-				answer.results[1]._uuid.should.be.a('string');
-				answer.results[1].a.should.equal('updated');
-				answer.results[1].b.should.equal(17);
+				should.equal(err, null);
+				should.exist(res);
+				res.should.be.an.instanceof(Array);
+				should.exist(res[0]);
+				res[0].should.be.a('object');
+				res[0]._uuid.should.be.a('string');
+				res[0].a.should.equal('updated');
+				res[0].b.should.equal(2);
+				should.exist(res[1]);
+				res[1].should.be.a('object');
+				res[1]._uuid.should.be.a('string');
+				res[1].a.should.equal('updated');
+				res[1].b.should.equal(17);
 				
 				done();
 			}
