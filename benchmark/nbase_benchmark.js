@@ -1,7 +1,7 @@
-var nobase = require ('../lib/nobase');
+var Nbase = require ('../lib/nbase');
 var fs = require('fs');
 var should = require('should');
-var DB = new nobase('test');
+var DB = new Nbase('test');
 var helpers = {};
 var c = 0;
 
@@ -42,15 +42,8 @@ c++;
 var start = new Date().getTime();
 var answer = DB.find(true);
 var delta = new Date().getTime() - start;
-console.log('[' + c + '] @ ' + delta + 'ms ---> getting CLONES OF (ALL) 100000 elements');
-/* 
-// ---[[[
-c++;
-var start = new Date().getTime();
-var answer = DB.find(true, {noclone:true});
-var delta = new Date().getTime() - start;
-console.log('[' + c + '] @ ' + delta + 'ms ---> getting uncloned (ALL) 100000 elements');
- */
+console.log('[' + c + '] @ ' + delta + 'ms ---> getting (ALL) 100000 elements');
+
 // ---[[[
 c++;
 var last = false;
@@ -187,8 +180,8 @@ var answer = DB.dumpToFile(
 		);
 	}
 );
-
  */
+
 
 
 
