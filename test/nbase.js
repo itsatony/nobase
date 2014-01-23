@@ -59,30 +59,40 @@ describe(
 	}
 );
 
-/* 
+
 describe(
 	'Updating Single Document By Id',
 	function() {
 		it(
 			'should return an object with errors:null and results = [ doc.a = "something" && && doc.b = "different" && doc.d = "new" ]', 
 			function(done) {
-				var answer = DB.update(helpers._uuid, { d: 'new', b: 'different' });
-				should.equal(err, null);
-				should.exist(res);
-				res.should.be.an.instanceof(Array);
-				should.exist(res[0]);
-				res[0].should.be.type('object');
-				res[0]._uuid.should.be.type('string');
-				res[0].a.should.equal('something');
-				res[0].b.should.equal('different');
-				res[0].c.should.be.an.instanceof(Buffer);
-				res[0].d.should.equal('new');
-				done();
+				DB.update(
+					helpers._uuid, 
+					{ d: 'new', b: 'different' },
+					function(err, res) {
+						// console.log('===');
+						// console.log(res);
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[0].a.should.equal('something');
+						res[0].b.should.equal('different');
+						res[0].c.should.be.an.instanceof(Buffer);
+						res[0].d.should.equal('new');
+						done();
+					}
+				);
+				
 			}
 		);
 	}
 );
- */
+
+
+
 describe(
 	'POSITIVE checking if a document exists by Id',
 	function() {
@@ -191,9 +201,9 @@ describe(
 						res[0].should.be.type('object');
 						res[0]._uuid.should.be.type('string');
 						res[0].a.should.equal('something');
-						// res[0].b.should.equal('different');
+						res[0].b.should.equal('different');
 						res[0].c.should.be.an.instanceof(Buffer);
-						// res[0].d.should.equal('new');
+						res[0].d.should.equal('new');
 						should.not.exist(DB.store[helpers._uuid]);
 						done();
 					}
@@ -362,7 +372,7 @@ describe(
 		);
 	}
 );
-/* 
+
 describe(
 	'updating documents with a filter function',
 	function() {
@@ -387,7 +397,7 @@ describe(
 		);
 	}
 );
-  */
+ 
  
  
  
@@ -460,63 +470,69 @@ describe(
 
  */
  
- 
- /* 
-describe(
-	'deleting documents with a _id array',
-	function() {
-		it(
-			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
-			function(done) {
-				var answer = DB.remove([ Object.keys(DB.store)[0], Object.keys(DB.store)[1] ]);
-				should.equal(err, null);
-				should.exist(res);
-				res.should.be.an.instanceof(Array);
-				should.exist(res[0]);
-				should.exist(res[1]);
-				res[0].should.be.type('object');
-				res[0]._uuid.should.be.type('string');
-				res[1].should.be.type('object');
-				res[1]._uuid.should.be.type('string');
-				should.not.exist(res[2]);
-				should.not.exist(DB.store[res[0]._uuid]);
-				should.not.exist(DB.store[res[1]._uuid]);
-				done();
-			}
-		);
-	}
-);
-
-
 describe(
 	'updating documents with a _id array',
 	function() {
 		it(
 			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
 			function(done) {
-				var id0 = Object.keys(DB.store)[0];
-				var id1 = Object.keys(DB.store)[1];
-				var answer = DB.update([ id0, id1 ], { remove:1 }, {});
-				// console.log('---');
-				// console.log(DB.store[id0]);
-				// console.log('---');
-				should.equal(err, null);
-				should.exist(res);
-				res.should.be.an.instanceof(Array);
-				should.exist(res[0]);
-				should.exist(res[1]);
-				res[0].should.be.type('object');
-				res[0]._uuid.should.be.type('string');
-				res[1].should.be.type('object');
-				res[1]._uuid.should.be.type('string');
-				res[1].remove.should.be.type('number');
-				should.not.exist(res[2]);
-				done();
+				var id0 = Object.keys(DB.index)[0];
+				var id1 = Object.keys(DB.index)[1];
+				DB.update(
+					[ id0, id1 ], 
+					{ remove: 1 },
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						should.exist(res[1]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[1].should.be.type('object');
+						res[1]._uuid.should.be.type('string');
+						res[1].remove.should.be.type('number');
+						should.not.exist(res[2]);
+						done();
+					}
+				);
 			}
 		);
 	}
 );
- */
+
+describe(
+	'deleting documents with a _id array',
+	function() {
+		it(
+			'should return an array of objects with errors:null and results = [ doc1, doc2 ]', 
+			function(done) {
+				DB.remove(
+					[ Object.keys(DB.index)[0], Object.keys(DB.index)[1] ],
+					function(err, res) {
+						should.equal(err, null);
+						should.exist(res);
+						res.should.be.an.instanceof(Array);
+						should.exist(res[0]);
+						should.exist(res[1]);
+						res[0].should.be.type('object');
+						res[0]._uuid.should.be.type('string');
+						res[1].should.be.type('object');
+						res[1]._uuid.should.be.type('string');
+						should.not.exist(res[2]);
+						should.not.exist(DB.store[res[0]._uuid]);
+						should.not.exist(DB.store[res[1]._uuid]);
+						done();
+					}				
+				);
+			}
+		);
+	}
+);
+
+
+
+
 
  
  
