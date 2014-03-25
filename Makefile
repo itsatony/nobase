@@ -13,5 +13,5 @@ nbase:
 		test/nbase.js	
 		
 		
-		
-.PHONY: nobase
+	
+.PHONY: test
