@@ -470,6 +470,8 @@ describe(
 				answer.results[1]._uuid.should.be.type('string');
 				answer.results[1].remove.should.be.type('number');
 				should.not.exist(answer.results[2]);
+				console.log('--->-->');
+				console.log(Object.keys(DB.store).length);
 				done();
 			}
 		);
